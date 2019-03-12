@@ -1,0 +1,8 @@
+[masters]
+master ansible_host=benki1.lab.eng.blr.redhat.com ansible_user=root
+
+[workers]
+worker1 ansible_host=benki2.lab.eng.blr.redhat.com ansible_user=root
+worker2 ansible_host=benki3.lab.eng.blr.redhat.com ansible_user=root
+worker3 ansible_host=benki5.lab.eng.blr.redhat.com ansible_user=root
+worker4 ansible_host=benki6.lab.eng.blr.redhat.com ansible_user=root

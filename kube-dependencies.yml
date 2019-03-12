@@ -1,0 +1,79 @@
+- hosts: all
+  become: yes
+  tasks:
+   - name: Install required packages for docker-ce
+     yum:
+       name: [device-mapper-persistent-data lvm2]
+       state: present
+       update_cache: true
+
+   - name add docker-ce repository
+     yum_repository:
+       name: docker-ce
+       description: docker-ce YUM repository
+       baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+
+   - name: install docker-ce, docker-ce-cli containerd.io
+     yum:
+       name: [docker-ce, docker-ce-cli, containerd.io]
+       state: present
+       update_cache: true
+
+   - name: start Docker
+     service:
+       name: docker
+       state: started
+
+   - name: disable SELinux
+     command: setenforce 0
+
+   - name: disable SELinux on reboot
+     selinux:
+       state: disabled
+
+   - name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
+     sysctl:
+      name: net.bridge.bridge-nf-call-ip6tables
+      value: 1
+      state: present
+
+   - name: ensure net.bridge.bridge-nf-call-iptables is set to 1
+     sysctl:
+      name: net.bridge.bridge-nf-call-iptables
+      value: 1
+      state: present
+
+   - name: add Kubernetes' YUM repository
+     yum_repository:
+      name: Kubernetes
+      description: Kubernetes YUM repository
+      baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+      gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+      gpgcheck: yes
+
+   - name: install kubelet
+     yum:
+        name: kubelet-1.13.3
+        state: present
+        update_cache: true
+
+   - name: install kubeadm
+     yum:
+        name: kubeadm-1.13.3
+        state: present
+
+   - name: start kubelet
+     service:
+       name: kubelet
+       enabled: yes
+       state: started
+
+- hosts: master
+  become: yes
+  tasks:
+   - name: install kubectl
+     yum:
+        name: kubectl-1.13.3
+        state: present
+        allow_downgrade: yes
+
