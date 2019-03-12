@@ -94,8 +94,8 @@ systemctl restart docker
 6. Check whether master node is ready
 ```
 # kubectl get nodes
-NAME                            STATUS     ROLES    AGE     VERSION
-benki1.lab.eng.blr.redhat.com   Ready      master   1d16h   v1.13.4
+NAME                   STATUS     ROLES    AGE     VERSION
+kube1.blr.redhat.com   Ready      master   1d16h   v1.13.4
 
 ```
 7. Setup worker nodes
