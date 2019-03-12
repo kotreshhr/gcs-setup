@@ -9,7 +9,7 @@
  On fedora/CentOS machines
 #yum install ansible
  ```
-7. Disable **swap** on **kubernetes cluster nodes**
+4. Disable **swap** on **kubernetes cluster nodes**
 ```
 # blkid | grep swap
 /dev/mapper/centos_benki1-swap: UUID="542afe12-ed18-49e3-b711-278e94d7ce34" TYPE="swap" 
@@ -87,11 +87,11 @@ mkdir -p /etc/systemd/system/docker.service.d
 systemctl daemon-reload  
 systemctl restart docker  
 ```
-4. Setup the master node
+5. Setup the master node
 ```
 #ansible-playbook -i hosts master.yml
 ```
-5. Check whether master node is ready
+6. Check whether master node is ready
 ```
 # kubectl get nodes
 NAME                            STATUS     ROLES    AGE     VERSION
