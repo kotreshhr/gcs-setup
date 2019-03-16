@@ -3,15 +3,12 @@
   tasks:
    - name: Install required packages for docker-ce
      yum:
-       name: [device-mapper-persistent-data lvm2]
+       name: [yum-utils, device-mapper-persistent-data, lvm2]
        state: present
        update_cache: true
 
-   - name add docker-ce repository
-     yum_repository:
-       name: docker-ce
-       description: docker-ce YUM repository
-       baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+   - name: add docker-ce repository
+     command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
    - name: install docker-ce, docker-ce-cli containerd.io
      yum:
@@ -30,6 +27,58 @@
    - name: disable SELinux on reboot
      selinux:
        state: disabled
+
+   - name: Remove swapfile from /etc/fstab
+     mount:
+       name: swap
+       fstype: swap
+       state: absent
+
+   - name: Disable swap
+     command: swapoff -a
+     when: ansible_swaptotal_mb > 0
+
+   - name: Disable and stop firewalld
+     service:
+       name: firewalld
+       state: stopped
+       enabled: no
+
+   - name: Create /etc/docker directory
+     file:
+       path: /etc/docker
+       state: directory
+
+   - name: Create docker daemon json with systemd cgroup-driver
+     copy:
+      dest: "/etc/docker/daemon.json"
+      content: |
+        {
+          "exec-opts": ["native.cgroupdriver=systemd"],
+          "log-driver": "json-file",
+          "log-opts": {
+        "max-size": "100m"
+          },
+          "storage-driver": "overlay2",
+          "storage-opts": [
+        "overlay2.override_kernel_check=true"
+          ]
+        }
+
+   - name: Create docker systemd service directory
+     file:
+       path: /etc/systemd/system/docker.service.d
+       state: directory
+
+   - name: Reload docker service
+     service:
+       name: docker
+       state: reloaded
+
+   - name: Restart docker service
+     service:
+       name: docker
+       state: restarted
 
    - name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
      sysctl:
