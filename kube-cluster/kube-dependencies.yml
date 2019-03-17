@@ -16,9 +16,10 @@
        state: present
        update_cache: true
 
-   - name: start Docker
+   - name: start docker and enable at boot
      service:
        name: docker
+       enabled: yes
        state: started
 
    - name: disable SELinux
