@@ -1,7 +1,9 @@
 # Setup Kubernetes Cluster on CentOS 7
 
 ### Prerequisites
-1. **Four** machines with CentOS 7 installed. **Three** machines are fine but master has to be  worker as well in that case. These will be called as **kubernetes cluster nodes** going forward.
+1. **Four** machines with CentOS 7 installed. **Three** machines are sufficient
+   to try but in that case master has to allow pods to be scheduled on it. These
+   will be called as **kubernetes cluster nodes** going forward.
 2. Setup passwordless SSH from **local machine** to all **kubernetes cluster nodes**
 3. Install ansible on local machine
  ```
@@ -53,4 +55,11 @@ kube2.blr.redhat.com   Ready      <none>   1d16h   v1.13.4
 kube3.blr.redhat.com   Ready      <none>   1d16h   v1.13.4
 kube4.blr.redhat.com   Ready      <none>   1d16h   v1.13.4
 
+```
+8. If **four** nodes are in kubernetes cluster. ignore this step. If **three** nodes, run below
+   command to allow pods to be scheduled on master as well. This is required as gluster
+   container storage expects minimum three nodes.
+   
+```
+kubectl taint nodes --all node-role.kubernetes.io/master-
 ```
